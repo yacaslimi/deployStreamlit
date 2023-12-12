@@ -1,5 +1,8 @@
 import streamlit as st
 import joblib
+import pandas
+import sklearn
+
 
 # Load your model and label encoder
 svm_model = joblib.load('svm_model.pkl')
