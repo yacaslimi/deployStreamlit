@@ -33,7 +33,11 @@ def main():
             # Make a prediction
             prediction = svm_model.predict([features])
             prediction_label = le.inverse_transform(prediction)
-            
+
+            # Debugging: Print statements to check the prediction
+            st.write("Prediction (numerical):", prediction)  # Debugging line
+            st.write("Prediction label:", prediction_label)  # Debugging line
+
             # Display the result with custom styling
             result_text = "Le patient a le gène PAX6" if prediction_label[0] == 1 else "Le patient n'a pas le gène PAX6"
             st.markdown(f"<h2 style='color:red;'>{result_text}</h2>", unsafe_allow_html=True)
