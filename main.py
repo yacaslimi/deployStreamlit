@@ -1,28 +1,31 @@
 import streamlit as st
-import pandas as pd
 import joblib
 
-# Chargement du modèle et de l'encodeur
-model = joblib.load('model_svm.joblib')
-label_encoder = joblib.load('label_encoder.joblib')
+# Load your model and label encoder
+svm_model = joblib.load('svm_model.pkl')
+le = joblib.load('label_encoder.pkl')
 
-# Titre de l'application
-st.title('Ophthalmic Genetic Diagnosis Prediction')
+def main():
+    st.title("ML Model Prediction")
 
-# Création des champs de saisie pour les entrées
-age = st.text_input('Age', '0')
-unilateral_cataract = st.text_input('Unilateral Cataract', '0')
-bilateral_cataract = st.text_input('Bilateral Cataract', '0')
-corneal_opacity = st.text_input('Corneal Opacity', '0')
-retinal_affliction = st.text_input('Retinal Affliction', '0')
+    # Creating text input boxes for each feature
+    age = st.number_input("Age", min_value=0.5, max_value=100.0, step=0.1)
+    cataracte_unilaterale = st.selectbox("Cataracte Unilatérale", [0, 1])  # Assuming binary input: 0 for No, 1 for Yes
+    cataracte_bilaterale = st.selectbox("Cataracte Bilatérale", [0, 1])
+    opacite_cornee = st.selectbox("Opacité Cornée", [0, 1])
+    atteinte_retine = st.selectbox("Atteinte Rétine", [0, 1])
 
-# Bouton de prédiction
-if st.button('Predict PAX6 Status'):
-    # Préparation des données pour la prédiction
-    input_data = pd.DataFrame([[age, unilateral_cataract, bilateral_cataract, corneal_opacity, retinal_affliction]],
-                              columns=['Age', 'Unilateral Cataract', 'Bilateral Cataract', 'Corneal Opacity', 'Retinal Affliction'])
-    input_data_encoded = label_encoder.transform(input_data)
+    # Button to make prediction
+    if st.button('Predict'):
+        # Prepare the feature vector for prediction
+        features = [age, cataracte_unilaterale, cataracte_bilaterale, opacite_cornee, atteinte_retine]
+        
+        # Make a prediction
+        prediction = svm_model.predict([features])
+        prediction_label = le.inverse_transform(prediction)
+        
+        # Display the result
+        st.write(f'Prediction: {prediction_label[0]}')
 
-    # Prédiction
-    prediction = model.predict(input_data_encoded)
-    st.write(f'Predicted PAX6 Status: {prediction[0]}')
+if __name__ == '__main__':
+    main()
